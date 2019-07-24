@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     private ProgressBar mLoadingIndicator;
 
     private ArrayList<MoviesData> itemList;
+    private boolean isConnected = true;
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -77,20 +78,28 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     }
 
     @Override
-    public void onClick(String weatherForDay) {
-        Context context = this;
-        Class destinationClass = MovieDetail.class;
-        Intent intentToStartDetailActivity = new Intent(context, destinationClass);
-        intentToStartDetailActivity.putExtra(Intent.EXTRA_TEXT, weatherForDay);
-        startActivity(intentToStartDetailActivity);
+    public void onClick(int position) {
+
+        Intent intent = new Intent(this, MovieDetail.class);
+        intent.putExtra(Constants.INTENT_TAG, itemList.get(position));
+        startActivity(intent);
     }
 
 
     private void showErrorMessage() {
-        /* First, hide the currently visible data */
-        mRecyclerView.setVisibility(View.INVISIBLE);
-        /* Then, show the error */
-        mErrorMessageDisplay.setVisibility(View.VISIBLE);
+
+        if (isConnected) {
+            /* First, hide the currently visible data */
+            mRecyclerView.setVisibility(View.INVISIBLE);
+            /* Then, show the error */
+            mErrorMessageDisplay.setVisibility(View.VISIBLE);
+        } else {
+            /* First, hide the currently visible data */
+            mRecyclerView.setVisibility(View.INVISIBLE);
+            /* Then, show the error */
+            mErrorMessageDisplay.setText("No Internet Connection");
+            mErrorMessageDisplay.setVisibility(View.VISIBLE);
+        }
     }
 
     public class FetchMoviesTask extends AsyncTask<Integer, Void, ArrayList<MoviesData>> {
@@ -109,20 +118,26 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
                 return null;
             }
 
-            int urlNumber = params[0];
-            URL requestUrl = NetworkUtils.buildUrl(urlNumber);
+            if ( NetworkUtils.networkStatus(MainActivity.this) ) {
 
-            try {
-                String jsonResponse = NetworkUtils
-                        .getResponseFromHttpUrl(requestUrl);
+                int urlNumber = params[0];
+                URL requestUrl = NetworkUtils.buildUrl(urlNumber);
 
-                itemList = OpenMoviesJsonUtils
-                        .getSimpleWeatherStringsFromJson(MainActivity.this, jsonResponse);
+                try {
+                    String jsonResponse = NetworkUtils
+                            .getResponseFromHttpUrl(requestUrl);
 
-                return itemList;
+                    itemList = OpenMoviesJsonUtils
+                            .fetchMoviesDetailsFromJson(MainActivity.this, jsonResponse);
 
-            } catch (Exception e) {
-                e.printStackTrace();
+                    return itemList;
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } else {
+                isConnected = false;
                 return null;
             }
         }
@@ -133,6 +148,8 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
             if (moviesData != null) {
                 showDataView();
                 moviesAdapter.setMoviesData(moviesData);
+            } else if (isConnected == false ){
+                showErrorMessage();
             } else {
                 showErrorMessage();
             }

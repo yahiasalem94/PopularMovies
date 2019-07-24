@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 public final class OpenMoviesJsonUtils {
 
-    public static ArrayList<MoviesData> getSimpleWeatherStringsFromJson(Context context, String forecastJsonStr)
+    public static ArrayList<MoviesData> fetchMoviesDetailsFromJson(Context context, String forecastJsonStr)
             throws JSONException {
 
         ArrayList<MoviesData> itemList = new ArrayList<>();

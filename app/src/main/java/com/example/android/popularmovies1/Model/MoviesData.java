@@ -1,6 +1,9 @@
 package com.example.android.popularmovies1.Model;
 
-public class MoviesData {
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public class MoviesData implements Serializable {
 
     private String title;
     private String releaseDate;

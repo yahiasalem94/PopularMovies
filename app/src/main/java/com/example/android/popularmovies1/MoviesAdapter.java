@@ -23,7 +23,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
 
 
     public interface MoviesAdapterOnClickHandler {
-        void onClick(String weatherForDay);
+        void onClick(int position);
     }
 
 
@@ -43,9 +43,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
 
         @Override
         public void onClick(View v) {
-            int adapterPosition = getAdapterPosition();
-            String movieTitle = mMoviesData.get(adapterPosition).getTitle();
-            mClickHandler.onClick(movieTitle);
+            mClickHandler.onClick(getAdapterPosition());
         }
     }
 
@@ -62,6 +60,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
     public void onBindViewHolder(MoviesAdapterViewHolder adapterViewHolder, int position) {
         Log.d("MoviesAdapter", mMoviesData.get(position).getPosterPath());
         Picasso.get().load(Constants.IMAGE_URL+mMoviesData.get(position).getPosterPath()).into(adapterViewHolder.mMoviePosterImageView);
+        adapterViewHolder.mMoviePosterImageView.setAdjustViewBounds(true);
     }
 
     @Override
