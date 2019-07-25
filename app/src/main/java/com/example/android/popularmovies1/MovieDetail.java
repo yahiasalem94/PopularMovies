@@ -42,8 +42,7 @@ public class MovieDetail extends AppCompatActivity {
 
             Picasso.get().load(Constants.IMAGE_URL+movie.getPosterPath()).into(posterImage);
             title.setText(movie.getTitle());
-            String [] date = movie.getReleaseDate().split("-");
-            releaseDate.setText(date[0]);
+            releaseDate.setText(movie.getReleaseDate());
             String ratingValue = movie.getVoteAverage()+totalVotes;
             rating.setText(ratingValue);
             overview.setText(movie.getOverview());
