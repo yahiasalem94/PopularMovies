@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         mErrorMessageDisplay = findViewById(R.id.tv_error_message_display);
 
         // set a GridLayoutManager with default vertical orientation and 2 number of columns
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(),2);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(),calculateNoOfColumns(this));
         mRecyclerView.setLayoutManager(gridLayoutManager); // set LayoutManager to RecyclerView
 
         //  call the constructor of MoviesAdapter to send the reference and data to Adapter
@@ -62,6 +63,16 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         mLoadingIndicator = findViewById(R.id.pb_loading_indicator);
 
         loadData(0);
+    }
+
+    public static int calculateNoOfColumns(Context context) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+        int scalingFactor = 200;
+        int noOfColumns = (int) (dpWidth / scalingFactor);
+        if(noOfColumns < 2)
+            noOfColumns = 2;
+        return noOfColumns;
     }
 
     private void loadData(int i) {
